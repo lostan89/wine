@@ -1,5 +1,6 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import datetime
+import pandas as pd
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -20,12 +21,17 @@ env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
+df =  pd.read_excel('wine.xlsx')
+
+wine_info_list = df.to_dict(orient='records')
+
 template = env.get_template('template.html')
 winery_age_years=datetime.datetime.now().year-1920
 age_ending=ending(winery_age_years)
 rendered_page = template.render(
     winery_age_years=winery_age_years, 
     age_ending=age_ending,
+    wine_info_list=wine_info_list,
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
