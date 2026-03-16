@@ -1,6 +1,7 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import datetime
 import pandas as pd
+import collections
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -21,9 +22,16 @@ env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-df =  pd.read_excel('wine.xlsx')
 
-wine_info_list = df.to_dict(orient='records')
+
+df =  pd.read_excel('wine2.xlsx', keep_default_na=False)
+
+
+
+wine_info_list = collections.defaultdict(list)
+
+for category, group_df in df.groupby('Категория'):
+    wine_info_list[category] = group_df.to_dict('records')
 
 template = env.get_template('template.html')
 winery_age_years=datetime.datetime.now().year-1920
@@ -31,7 +39,7 @@ age_ending=ending(winery_age_years)
 rendered_page = template.render(
     winery_age_years=winery_age_years, 
     age_ending=age_ending,
-    wine_info_list=wine_info_list,
+    wine_info_list=list(wine_info_list.values()),
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
