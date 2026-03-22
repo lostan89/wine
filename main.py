@@ -2,6 +2,8 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import datetime
 import pandas as pd
 import collections
+from dotenv import load_dotenv
+import os
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -18,15 +20,20 @@ def get_year_ending(num):
     else:
         return "лет"
 
-def main():
 
+def main():
+    load_dotenv()
     env = Environment(
         loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
     )
 
-
-    df = pd.read_excel("wine3.xlsx", keep_default_na=False)
-
+    file_path = os.getenv("EXCEL_FILE_PATH", "wine3.xlsx")
+    default_file = "wine3.xlsx"
+    try:
+        df = pd.read_excel(file_path, keep_default_na=False)
+    except FileNotFoundError as e:
+        print(f"Ошибка {e}")
+        df = pd.read_excel(default_file, keep_default_na=False)
 
     wine_info_list = collections.defaultdict(list)
 
@@ -48,5 +55,6 @@ def main():
     server = HTTPServer(("127.0.0.1", 8000), SimpleHTTPRequestHandler)
     server.serve_forever()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
