@@ -6,7 +6,7 @@ import collections
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-def ending(num):
+def get_year_ending(num):
     num = num % 100
     if 5 <= num <= 20:
         return "лет"
@@ -35,7 +35,7 @@ def main():
 
     template = env.get_template("template.html")
     winery_age_years = datetime.datetime.now().year - 1920
-    age_ending = ending(winery_age_years)
+    age_ending = get_year_ending(winery_age_years)
     rendered_page = template.render(
         winery_age_years=winery_age_years,
         age_ending=age_ending,
