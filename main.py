@@ -41,7 +41,8 @@ def main():
         wine_info_list[category] = group_df.to_dict("records")
 
     template = env.get_template("template.html")
-    winery_age_years = datetime.datetime.now().year - 1920
+    winery_foudation_year = 1920
+    winery_age_years = datetime.datetime.now().year - winery_foudation_year
     age_ending = get_year_ending(winery_age_years)
     rendered_page = template.render(
         winery_age_years=winery_age_years,
