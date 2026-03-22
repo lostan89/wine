@@ -35,7 +35,7 @@ def main():
         print(f"Ошибка {e}")
         df = pd.read_excel(default_file, keep_default_na=False)
 
-    wine_info_list = collections.defaultdict(list)
+    alcohol_product_data = collections.defaultdict(list)
 
     for category, group_df in df.groupby("Категория"):
         wine_info_list[category] = group_df.to_dict("records")
@@ -46,7 +46,7 @@ def main():
     rendered_page = template.render(
         winery_age_years=winery_age_years,
         age_ending=age_ending,
-        wine_info_list=list(wine_info_list.values()),
+        alcohol_product_data=list(alcohol_product_data.values()),
     )
 
     with open("index.html", "w", encoding="utf8") as file:
