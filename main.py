@@ -4,7 +4,6 @@ import pandas as pd
 import collections
 from dotenv import load_dotenv
 import os
-
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
@@ -31,14 +30,13 @@ def main():
     default_file = "wine3.xlsx"
     try:
         df = pd.read_excel(file_path, keep_default_na=False)
-    except FileNotFoundError as e:
-        print(f"Ошибка {e}")
+    except FileNotFoundError:
         df = pd.read_excel(default_file, keep_default_na=False)
 
     alcohol_product_data = collections.defaultdict(list)
 
     for category, group_df in df.groupby("Категория"):
-        wine_info_list[category] = group_df.to_dict("records")
+        alcohol_product_data[category] = group_df.to_dict("records")
 
     template = env.get_template("template.html")
     winery_foudation_year = 1920
@@ -47,7 +45,7 @@ def main():
     rendered_page = template.render(
         winery_age_years=winery_age_years,
         age_ending=age_ending,
-        alcohol_product_data=list(alcohol_product_data.values()),
+        alcohol_product_data=list(alcohol_product_data.items()),
     )
 
     with open("index.html", "w", encoding="utf8") as file:
