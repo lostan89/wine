@@ -25,9 +25,9 @@ def main():
     env = Environment(
         loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
     )
-
-    file_path = os.getenv("EXCEL_FILE_PATH", "wine3.xlsx")
     default_file = "wine3.xlsx"
+    file_path = os.getenv("EXCEL_FILE_PATH", default_file)
+    
     try:
         df = pd.read_excel(file_path, keep_default_na=False)
     except FileNotFoundError:
@@ -45,7 +45,7 @@ def main():
     rendered_page = template.render(
         winery_age_years=winery_age_years,
         age_ending=age_ending,
-        alcohol_product_data=list(alcohol_product_data.items()),
+        alcohol_product_data=alcohol_product_data.items(),
     )
 
     with open("index.html", "w", encoding="utf8") as file:
